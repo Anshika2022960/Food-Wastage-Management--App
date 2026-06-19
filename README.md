@@ -134,9 +134,16 @@ pip install -r requirements.txt
 Update the database credentials in `database.py`.
 
 ### Step 4: Run the application
+streamlit run app.py
+
+### step 4: Streamlit link [https://food-wastage-management--app.streamlit.app/]
 
 ```bash
-streamlit run app.py
+
+
+
+
+
 ```
 
 ---
