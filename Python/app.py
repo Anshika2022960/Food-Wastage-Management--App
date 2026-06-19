@@ -91,10 +91,19 @@ except:
 st.markdown("---")
 
 # ---------------- LOAD DATA ----------------
+
 food = pd.read_csv("Raw Data/food_listings_data.csv")
 providers = pd.read_csv("Raw Data/providers_data.csv")
 receivers = pd.read_csv("Raw Data/receivers_data.csv")
 claims = pd.read_csv("Raw Data/claims_data.csv")
+
+# Clean column names
+food.columns = food.columns.str.strip().str.lower()
+providers.columns = providers.columns.str.strip().str.lower()
+receivers.columns = receivers.columns.str.strip().str.lower()
+claims.columns = claims.columns.str.strip().str.lower()
+
+
 
 # ---------------- SIDEBAR FILTERS ----------------
 st.sidebar.header("Filter Options")
@@ -491,7 +500,7 @@ crud_option = st.selectbox(
 
 if crud_option == "View Records":
     st.warning("Food Claim and CRUD operations are available in the local PostgreSQL version. The deployed version is read-only CSV demo.")
-    
+
 elif crud_option == "Add Food Listing":
     food_id = st.number_input("Food ID", min_value=1, step=1)
     food_name = st.text_input("Food Name")
