@@ -2,7 +2,6 @@ from PIL import Image
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from database import engine
 from datetime import datetime
 
 st.set_page_config(
@@ -10,6 +9,64 @@ st.set_page_config(
     page_icon="♻️",
     layout="wide"
 )
+
+st.markdown("""
+<style>
+/* Main dashboard background */
+[data-testid="stAppViewContainer"] {
+    background-color: #18202B;
+}
+
+/* Sidebar background - matching but slightly darker */
+[data-testid="stSidebar"] {
+    background-color: #18202B;
+}
+
+/* Main content text */
+h1, h2, h3, p, label, span {
+    color: #F5F7FA !important;
+}
+
+/* Sidebar labels */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span {
+    color: #F5F7FA !important;
+    font-weight: 600;
+}
+
+/* Dropdown boxes */
+[data-baseweb="select"] {
+    background-color: #FFFFFF !important;
+    border-radius: 8px;
+}
+
+/* KPI cards */
+[data-testid="stMetric"] {
+    background-color: #243247;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #3A4A63;
+}
+
+/* KPI title */
+[data-testid="stMetricLabel"] {
+    color: #E6EDF5 !important;
+}
+
+/* KPI value */
+[data-testid="stMetricValue"] {
+    color: #2EE6C8 !important;
+    font-size: 32px;
+}
+
+/* Divider */
+hr {
+    border: 1px solid #3A4A63;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # ---------------- HEADER ----------------
 try:
@@ -34,10 +91,10 @@ except:
 st.markdown("---")
 
 # ---------------- LOAD DATA ----------------
-food = pd.read_sql("SELECT * FROM food_listings", engine)
-providers = pd.read_sql("SELECT * FROM providers", engine)
-receivers = pd.read_sql("SELECT * FROM receivers", engine)
-claims = pd.read_sql("SELECT * FROM claims", engine)
+food = pd.read_csv("Raw Data/food_listings_data.csv")
+providers = pd.read_csv("Raw Data/providers_data.csv")
+receivers = pd.read_csv("Raw Data/receivers_data.csv")
+claims = pd.read_csv("Raw Data/claims_data.csv")
 
 # ---------------- SIDEBAR FILTERS ----------------
 st.sidebar.header("Filter Options")
@@ -59,7 +116,8 @@ if food_type:
     filtered_food = filtered_food[filtered_food["food_type"].isin(food_type)]
 
 # ---------------- 9 KPIs ----------------
-st.subheader(" ♻️ Dashboard KPIs")
+st.markdown("## 📊 Executive Dashboard")
+st.caption("Real-time food donation, claim, provider and recovery analysis")
 
 total_food_quantity = int(filtered_food["quantity"].sum())
 total_food_listings = len(filtered_food)
@@ -99,8 +157,46 @@ k8.metric("Food Recovery Rate (%)", f"{food_recovery_rate}%")
 k9.metric("Expiring Food Count", expiring_food_count)
 
 st.markdown("---")
+st.subheader("📈 Key Visual Insights")
+
+c1, c2 = st.columns(2)
+
+with c1:
+    chart_data = food.groupby("provider_type")["quantity"].sum().reset_index()
+    fig = px.bar(chart_data, x="provider_type", y="quantity",
+                 title="Food Quantity by Provider Type")
+    fig.update_layout(template="plotly_dark")
+    st.plotly_chart(fig, use_container_width=True)
+
+with c2:
+    claim_data = claims["status"].value_counts().reset_index()
+    claim_data.columns = ["status", "count"]
+    fig = px.pie(claim_data, names="status", values="count",
+                 title="Claim Status Distribution")
+    fig.update_layout(template="plotly_dark")
+    st.plotly_chart(fig, use_container_width=True)
+
+c3, c4 = st.columns(2)
+
+with c3:
+    city_data = food["location"].value_counts().head(10).reset_index()
+    city_data.columns = ["location", "count"]
+    fig = px.bar(city_data, x="location", y="count",
+                 title="Top Cities by Food Listings")
+    fig.update_layout(template="plotly_dark")
+    st.plotly_chart(fig, use_container_width=True)
+
+with c4:
+    meal_data = food.groupby("meal_type")["quantity"].sum().reset_index()
+    fig = px.bar(meal_data, x="meal_type", y="quantity",
+                 title="Meal Type vs Quantity")
+    fig.update_layout(template="plotly_dark")
+    st.plotly_chart(fig, use_container_width=True)
 
 # ---------------- FOOD LISTINGS TABLE ----------------
+
+st.markdown("---")
+
 st.subheader("🍱 Food Listings Data")
 st.dataframe(filtered_food, use_container_width=True)
 
@@ -243,8 +339,8 @@ sql_queries = {
 }
 
 query_option = st.selectbox("Select SQL Query", list(sql_queries.keys()))
-result = pd.read_sql(sql_queries[query_option], engine)
-st.dataframe(result, use_container_width=True, hide_index=True)
+st.info("SQL queries are included in the project SQL file. Live deployed version uses CSV data for dashboard and EDA.")
+
 
 # ---------------- EDA CHARTS ----------------
 st.markdown("---")
@@ -394,9 +490,8 @@ crud_option = st.selectbox(
 )
 
 if crud_option == "View Records":
-    food_data = pd.read_sql("SELECT * FROM food_listings ORDER BY food_id", engine)
-    st.dataframe(food_data, use_container_width=True)
-
+    st.warning("Food Claim and CRUD operations are available in the local PostgreSQL version. The deployed version is read-only CSV demo.")
+    
 elif crud_option == "Add Food Listing":
     food_id = st.number_input("Food ID", min_value=1, step=1)
     food_name = st.text_input("Food Name")
