@@ -136,7 +136,7 @@ Update the database credentials in `database.py`.
 ### Step 4: Run the application
 streamlit run app.py
 
-### step 5: Streamlit URL [https://food-wastage-management--app.streamlit.app/]
+### step 5: Streamlit Live Demo URL [https://food-wastage-management--app.streamlit.app/]
 
 ```bash
 
