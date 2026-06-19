@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
+import os
 
 st.set_page_config(
     page_title="Local Food Wastage Management System",
@@ -70,7 +71,10 @@ hr {
 
 # ---------------- HEADER ----------------
 try:
-    banner = Image.open("banner.png")
+    BASE_DIR = os.path.dirname(__file__)
+    banner_path = os.path.join(BASE_DIR, "banner.png")
+    banner = Image.open(banner_path)
+
     col1, col2 = st.columns([1, 5])
 
     with col1:
@@ -85,11 +89,10 @@ try:
         </h1>
         """, unsafe_allow_html=True)
 
-except:
+except Exception:
     st.title("♻️ Local Food Wastage Management System")
 
 st.markdown("---")
-
 # ---------------- LOAD DATA ----------------
 
 food = pd.read_csv("Raw Data/food_listings_data.csv")
