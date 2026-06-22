@@ -152,28 +152,28 @@ streamlit run app.py
 
 ### Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](Screenshots/dashboard.png)
 
 ### Food Listings
 
-![Food Listings](screenshots/food_listings.png)
+![Food Listings](Screenshots/food_listings.png)
 
 ### Contact Information
 
-![Contact Information](screenshots/contacts.png)
+![Contact Information](Screenshots/contacts.png)
 
 ### SQL Analysis
 
-![SQL Analysis](screenshots/sql_analysis.png)
+![SQL Analysis](Screenshots/sql_analysis.png)
 
 ### EDA Charts
 
-![EDA Charts](screenshots/eda_charts.png)
+![EDA Charts](Screenshots/eda_charts.png)
 
 ### Food Claims
 
-![Food Claims](screenshots/food_claims.png)
+![Food Claims](Screenshots/food_claims.png)
 
 ### CRUD Operations
 
-![CRUD Operations](screenshots/crud_operations.png)
+![CRUD Operations](Screenshots/crud_operations.png)
